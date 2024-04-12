@@ -14,6 +14,8 @@ export
     # Functions
     vrep_matrix,
     flip,
+    isforward,
+    primitive,
     enumerate_fundamental_parallelepiped,
     compute_rational_function,
     compute_rational_function_str
