@@ -1,10 +1,11 @@
 name = "Cones"
 uuid = "26e1cdcf-0d11-452a-80c0-82a5afc2740a"
 authors = ["Alcyon Lab"]
-version = "1.0.2-DEV"
+version = "1.0.3-DEV"
 
 [deps]
 IterTools = "c8e1da08-722c-5040-9ed9-7db0dc04731e"
+LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
 NormalForms = "109d20d8-9763-411c-9b60-7eb2a068657f"
 Polynomials = "40aba029-825d-41bd-a97e-db86442ba04f"
 Values = "a33b2169-df44-41c1-bcb8-32c383ca81e5"

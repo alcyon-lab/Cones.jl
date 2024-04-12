@@ -1,5 +1,6 @@
 using NormalForms
 using IterTools
+using LinearAlgebra
 
 
 function enumerate_fundamental_parallelepiped(cone::Cone{T}) where {T<:Number}
