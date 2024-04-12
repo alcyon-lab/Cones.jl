@@ -3,7 +3,7 @@ using Polynomials
 function compute_rational_function(cone::Cone{T}, parallelepipeds::Vector{Vector{Int}}) where {T<:Number}
     num = 0
     for p in parallelepipeds
-        num += Polynomials.create_monomial_from_exponents(p)
+        num += Polynomials.create_monomial_from_exponents(p, length(cone.apex))
     end
 
     den = 1
