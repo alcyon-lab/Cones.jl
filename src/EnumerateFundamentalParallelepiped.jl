@@ -31,7 +31,7 @@ function enumerate_fundamental_parallelepiped(cone::Cone{T}) where {T<:Number}
     qfrac = [qtrans[i] - floor(Int, qtrans[i]) for i = 1:dimension]
     qint = [floor(Int, qi) for qi in qtrans]
     qsummand = [Int64(qi) for qi in (lastDiagonal * apex + vrep * qfrac)]
-    openness = [(qfrac[j] == 0 ? cone.openness[j] : 0) for j in 1:dimension]
+    openness = [(qfrac[j] == 0 ? cone.openness[j] : false) for j in 1:dimension]
     #bigP
     #res1 = [[1:1:diagonals[i];] for i= 1:dimension]
     # CartesianProduct( *[xrange(s[i]) for i in 1:k] )
