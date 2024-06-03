@@ -1,14 +1,14 @@
 using Polynomials
 
-function compute_rational_function(cone::Cone{T}, parallelepipeds::Vector{Vector{Int}}) where {T<:Number}
+function compute_rational_function(cone::Cone{T}, parallelepipeds::Vector{Vector{Int}}, x::Union{Vector}) where {T<:Number}
     num = 0
     for p in parallelepipeds
-        num += Polynomials.create_monomial_from_exponents(p, length(cone.apex))
+        num += Polynomials.create_monomial_from_exponents(p, x)
     end
 
     den = 1
     for ray in cone.rays
-        den *= (1 - Polynomials.create_monomial_from_exponents(ray.direction, length(cone.apex)))
+        den *= (1 - Polynomials.create_monomial_from_exponents(ray.direction, x))
     end
 
     return CombinationOfRationalFunctions(Pair(num * (-1)^(!cone.sign), den))

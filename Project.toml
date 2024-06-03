@@ -1,7 +1,7 @@
 name = "Cones"
 uuid = "26e1cdcf-0d11-452a-80c0-82a5afc2740a"
 authors = ["Alcyon Lab"]
-version = "1.0.6-DEV"
+version = "1.0.7-DEV"
 
 [deps]
 IterTools = "c8e1da08-722c-5040-9ed9-7db0dc04731e"
