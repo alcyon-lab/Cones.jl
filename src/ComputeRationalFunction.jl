@@ -1,16 +1,8 @@
 using Polynomials
 
 function compute_rational_function(cone::Cone{T}, parallelepipeds::Vector{Vector{Int}}, x::Union{Vector}) where {T<:Number}
-    num = 0
-    for p in parallelepipeds
-        num += Polynomials.create_monomial_from_exponents(p, x)
-    end
-
-    den = 1
-    for ray in cone.rays
-        den *= (1 - Polynomials.create_monomial_from_exponents(ray.direction, x))
-    end
-
+    num = sum([prod([x[i]^Int(p[i]) for i in eachindex(p)], init=1) for p in parallelepipeds])
+    den = prod([(1 - prod([x[i]^Int(ray.direction[i]) for i in eachindex(ray.direction)], init=1)) for ray in cone.rays])
     return CombinationOfRationalFunctions(Pair(num * (-1)^(!cone.sign), den))
 end
 
