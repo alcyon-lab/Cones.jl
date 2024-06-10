@@ -1,20 +1,33 @@
 using Polynomials
 
-function compute_rational_function(cone::Cone{T}, parallelepipeds::Vector{Vector{Int}}, x::Union{Vector}) where {T<:Number}
-    num = sum([prod([x[i]^Int(p[i]) for i in eachindex(p)], init=1) for p in parallelepipeds])
-    den = prod([(1 - prod([x[i]^Int(ray.direction[i]) for i in eachindex(ray.direction)], init=1)) for ray in cone.rays])
+function compute_rational_function(cone::Cone{T}, parallelepipeds, x::Union{Vector}) where {T<:Number}
+    num = sum([prod(x .^ Int32.(p)) for p in parallelepipeds])
+    den = prod([(1 - prod(x .^ Int32.(ray.direction))) for ray in cone.rays])
     return CombinationOfRationalFunctions(Pair(num * (-1)^(!cone.sign), den))
 end
 
 
-function compute_rational_function_str(cone::Cone{T}, parallelepipeds::Vector{Vector{Int}}) where {T<:Number}
+function compute_rational_function_str(cone::Cone{T}, parallelepipeds; counting::Bool=false) where {T<:Number}
     function create_monomial_str_from_exponents(z::Vector{<:Number})
         tmp = ""
         for i in eachindex(z)
-            if length(tmp) > 0
-                tmp = tmp * " * " * "x$(i)^($(z[i]))"
+            if z[i] == 0
+                t = "1"
             else
-                tmp = "x$(i)^($(z[i]))"
+                if counting
+                    t = "q^($(Int32(z[i])))"
+                else
+                    t = "x$(i)^($(Int32(z[i])))"
+                end
+            end
+            if length(tmp) > 0
+                if tmp == "1"
+                    tmp = t
+                elseif t != "1"
+                    tmp = tmp * " * " * t
+                end
+            else
+                tmp = t
             end
         end
         return "(" * tmp * ")"

@@ -2,7 +2,6 @@ using NormalForms
 using IterTools
 using LinearAlgebra
 
-
 function enumerate_fundamental_parallelepiped(cone::Cone{T}) where {T<:Number}
     vrep = Matrix{Int}(vrep_matrix(cone))
     SNFRes = NormalForms.snf(vrep)
@@ -35,36 +34,37 @@ function enumerate_fundamental_parallelepiped(cone::Cone{T}) where {T<:Number}
     #bigP
     #res1 = [[1:1:diagonals[i];] for i= 1:dimension]
     # CartesianProduct( *[xrange(s[i]) for i in 1:k] )
-    L = Vector{Int}[]
-    for v in IterTools.product([(0:diagonals[i]-1) for i in 1:dimension]...)
-        innerRes = []
-        j = 1
-        for qj in qint
-            inner = 0
-            i = 1
-            for vi in v
-                inner += Wprime[j, i] * vi
-                i += 1
-            end
-            inner += qj
-            inner = mod(inner, lastDiagonal)
-            if inner == 0 && openness[j]
-                inner = lastDiagonal
-            end
-            append!(innerRes, inner)
-            j += 1
-        end
-        outerRes = []
-        for l in 1:ambientDimension
-            outer = 0
+    f = let qint = qint, v = v, Wprime = Wprime, openness = openness, lastDiagonal = lastDiagonal, ambientDimension = ambientDimension, vrep = vrep
+        function (v)::Vector{Int}
+            innerRes = []
             j = 1
-            for innerResi in innerRes
-                outer += vrep[l, j] * innerResi
+            for qj in qint
+                inner = 0
+                i = 1
+                for vi in v
+                    inner += Wprime[j, i] * vi
+                    i += 1
+                end
+                inner += qj
+                inner = mod(inner, lastDiagonal)
+                if inner == 0 && openness[j]
+                    inner = lastDiagonal
+                end
+                append!(innerRes, inner)
                 j += 1
             end
-            append!(outerRes, outer) # outerRes is an integral vector
+            outerRes = []
+            for l in 1:ambientDimension
+                outer = 0
+                j = 1
+                for innerResi in innerRes
+                    outer += vrep[l, j] * innerResi
+                    j += 1
+                end
+                append!(outerRes, outer) # outerRes is an integral vector
+            end
+            return collect(Int64((ai + bi) // lastDiagonal) for (ai, bi) in collect(zip(outerRes, qsummand)))
         end
-        push!(L, collect(Int64((ai + bi) // lastDiagonal) for (ai, bi) in collect(zip(outerRes, qsummand))))
     end
-    return L
+    return (f(x) for x in IterTools.product([(0:diagonals[i]-1) for i in 1:dimension]...))
 end
