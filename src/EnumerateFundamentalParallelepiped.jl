@@ -34,37 +34,14 @@ function enumerate_fundamental_parallelepiped(cone::Cone{T}) where {T<:Number}
     #bigP
     #res1 = [[1:1:diagonals[i];] for i= 1:dimension]
     # CartesianProduct( *[xrange(s[i]) for i in 1:k] )
-    f = let qint = qint, v = v, Wprime = Wprime, openness = openness, lastDiagonal = lastDiagonal, ambientDimension = ambientDimension, vrep = vrep
-        function (v)::Vector{Int}
-            innerRes = []
-            j = 1
-            for qj in qint
-                inner = 0
-                i = 1
-                for vi in v
-                    inner += Wprime[j, i] * vi
-                    i += 1
-                end
-                inner += qj
-                inner = mod(inner, lastDiagonal)
-                if inner == 0 && openness[j]
-                    inner = lastDiagonal
-                end
-                append!(innerRes, inner)
-                j += 1
-            end
-            outerRes = []
-            for l in 1:ambientDimension
-                outer = 0
-                j = 1
-                for innerResi in innerRes
-                    outer += vrep[l, j] * innerResi
-                    j += 1
-                end
-                append!(outerRes, outer) # outerRes is an integral vector
-            end
-            return collect(Int64((ai + bi) // lastDiagonal) for (ai, bi) in collect(zip(outerRes, qsummand)))
+    f = let qint = qint, Wprime = Wprime, openness = openness, lastDiagonal = lastDiagonal, ambientDimension = ambientDimension, vrep = vrep
+        function (v)
+            innerRes = mod.(Wprime * v .+ qint, lastDiagonal)
+            innerRes = [inner == 0 && openness[j] ? lastDiagonal : inner for (inner, j) in zip(innerRes, 1:length(openness))]
+            outerRes = vrep * innerRes
+            finalRes = collect(Int64(ai + bi // lastDiagonal) for (ai, bi) in zip(outerRes, qsummand))
+            return finalRes
         end
     end
-    return (f(x) for x in IterTools.product([(0:diagonals[i]-1) for i in 1:dimension]...))
+    return (f(collect(x)) for x in IterTools.product([(0:diagonals[i]-1) for i in 1:dimension]...))
 end
