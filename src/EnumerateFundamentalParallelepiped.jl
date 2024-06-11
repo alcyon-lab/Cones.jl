@@ -39,7 +39,7 @@ function enumerate_fundamental_parallelepiped(cone::Cone{T}) where {T<:Number}
             innerRes = mod.(Wprime * v .+ qint, lastDiagonal)
             innerRes = [inner == 0 && openness[j] ? lastDiagonal : inner for (inner, j) in zip(innerRes, 1:length(openness))]
             outerRes = vrep * innerRes
-            finalRes = collect(Int64(ai + bi // lastDiagonal) for (ai, bi) in zip(outerRes, qsummand))
+            finalRes = collect(Int64(ai + bi) // lastDiagonal for (ai, bi) in zip(outerRes, qsummand))
             return finalRes
         end
     end
