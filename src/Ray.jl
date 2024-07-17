@@ -23,6 +23,10 @@ struct Ray{T}
     function Ray{T}(ray::Ray) where {T}
         new{T}(ray.direction, ray.apex)
     end
+
+    function Ray(ray::Ray{T}) where {T}
+        new{T}(ray.direction, ray.apex)
+    end
 end
 
 function Base.:+(ray1::Ray{T}, ray2::Ray) where {T}
@@ -64,7 +68,7 @@ function Base.show(io::IO, r::Ray{T}) where {T}
 end
 
 function flip(ray::Ray{T}) where {T}
-    return Ray{T}([-e for e in ray.direction])
+    return Ray{T}([-e for e in ray.direction], ray.apex)
 end
 
 function isforward(ray::Ray)
@@ -77,10 +81,14 @@ function isforward(ray::Ray)
             return false
         end
     end
+    # if ray is 0
+    @warn "isforward used on a ray with no direction"
+    return true
 end
 
 function primitive(ray::Ray{T}) where {T}
-    filtered_coordinates = collect(map(x -> Integer(x), filter(x -> isinteger(x), ray.direction)))
+    @assert !(T <: AbstractFloat) "primitive used on a float ray (Ray{$(T)})"
+    filtered_coordinates = collect(map(x -> Number(x), filter(x -> isinteger(x) || x isa Number, ray.direction)))
     if isempty(filtered_coordinates)
         return ray
     end
