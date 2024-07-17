@@ -1,13 +1,13 @@
-using NormalForms
+using SmithNormalForm
 using IterTools
 using LinearAlgebra
 
 function enumerate_fundamental_parallelepiped(cone::Cone{T}) where {T<:Number}
     vrep = Matrix{Int}(vrep_matrix(cone))
-    SNFRes = NormalForms.snf(vrep)
-    S = SNFRes.S
-    Uinv = SNFRes.U
-    Winv = SNFRes.V
+    SNFRes = SmithNormalForm.smith(vrep)
+    S = SmithNormalForm.diagm(SNFRes)
+    Uinv = SNFRes.Sinv
+    Winv = SNFRes.Tinv
     dimension = size(vrep, 2) # num of rows
     ambientDimension = size(vrep, 1) # num of cols
     diagonals = Int64[]
